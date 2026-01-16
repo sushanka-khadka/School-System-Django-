@@ -37,3 +37,10 @@ class Student(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} ({self.student_id})'
+    
+    # Auto-generate slug field before saving
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = f'{self.first_name.lower()}-{self.last_name.lower()}-{self.student_id}'
+
+        return super().save(*args, **kwargs)        # call the original save methodod

@@ -1,4 +1,5 @@
-from django.shortcuts import render, message, redirect
+from django.shortcuts import render,redirect
+from django.contrib import messages
 
 # Create your views here.
 from .models import Student, Parent
@@ -17,7 +18,7 @@ def add_student(request):
         admission_number = request.POST.get('admission_number')
         joining_date = request.POST.get('joining_date')
         mobile_number = request.POST.get('mobile_number')
-        student_image = request.FILES.get('student')     # must use request.FILES to get file data
+        student_image = request.FILES.get('student_image')     # must use request.FILES to get file data
         # parent = request.POST.get('parent')       # false, we will create parent object separately (one to one relationship)
         slug = request.POST.get('slug')
 
@@ -32,7 +33,7 @@ def add_student(request):
         mother_mobile = request.POST.get('mother_mobile')
         mother_email = request.POST.get('mother_email')
         present_address = request.POST.get('present_address')
-        permanent_address =request.POST.get('prermanent_address')
+        permanent_address = request.POST.get('permanent_address')
 
         # save the student and parent data to the database
         parent = Parent.objects.create(
@@ -66,7 +67,11 @@ def add_student(request):
             slug = slug
         )
 
-        message.success(request, 'Student added successfully!')
+        messages.success(request, 'Student added successfully!')
         return redirect('student-list')
     
     return render(request, 'student/add-student.html')
+
+def student_list(request):
+    students = Student.objects.all()
+    return render(request, 'student/student-list.html', {'students': students})
