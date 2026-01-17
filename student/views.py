@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
+from django.http import HttpResponseForbidden
 # Create your views here.
 from .models import Student, Parent
 
@@ -128,3 +128,13 @@ def edit_student(request, slug):
         return redirect('student_list')
     
     return render(request, 'student/edit-student.html', {'student': student, 'parent': parent})
+
+def delete_student(request, slug):
+    if request.method == 'POST':
+        student = get_object_or_404(Student, slug=slug)
+        student_name = f'{student.first_name} {student.last_name}'
+        student.delete()
+        messages.success(request, f'{student_name} deleted successfully!')
+        return redirect('student_list')
+
+    return HttpResponseForbidden('Cannot delete student')
