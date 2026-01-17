@@ -75,6 +75,10 @@ def student_list(request):
     students = Student.objects.all()
     return render(request, 'student/student-list.html', {'students': students})
 
+def student_detail(request, slug):
+    student = get_object_or_404(Student, slug=slug)
+    return render(request, 'student/student-detail.html', {'student': student})
+
 def edit_student(request, slug):
     student = get_object_or_404(Student, slug=slug)     # automatically returns 404 if not found
     parent = student.parent if hasattr(student, 'parent') else None # get the related parent object else None

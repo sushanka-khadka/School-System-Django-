@@ -44,10 +44,10 @@
                                             <h2 class="table-avatar">
                                                 <a href="#" class="avatar avatar-sm mr-2">
                                                     <img class="avatar-img rounded-circle"
-                                                        src="{%if student.student_image%} {{student.student_image.url}} {% endif %}"
+                                                        src="{%if student.student_image %} {{student.student_image.url}} {% endif %}"
                                                         alt="User Image" height="35">
                                                 </a>
-                                                <a href="#">{{student.first_name}} {{student.last_name}}</a>
+                                                <a href="{% url 'student_detail' student.slug %}">{{student.first_name}} {{student.last_name}}</a>
                                             </h2>
                                         </td>
                                         <td>{{student.student_class}} {{student.section}}</td>
