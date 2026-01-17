@@ -1,0 +1,12 @@
+from django.shortcuts import render
+
+# Create your views here.
+
+def signup_view(request):
+    return render(request, 'authentication/register.html')
+
+def login_view(request):
+    return render(request, 'authentication/login.html')
+
+def forgot_password_view(request):
+    return render(request, 'authentication/forgot-password.html')
