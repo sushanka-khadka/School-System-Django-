@@ -75,3 +75,14 @@ def add_student(request):
 def student_list(request):
     students = Student.objects.all()
     return render(request, 'student/student-list.html', {'students': students})
+
+def edit_student(request, slug):
+    student = Student.objects.get(slug=slug)
+
+    if request.method == 'POST':
+        print('\n\nForm data submitted:')
+        print(request.POST)
+        print(request.FILES)
+        pass
+
+    return render(request, 'student/edit-student.html', {'student': student})
