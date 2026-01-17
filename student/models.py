@@ -27,8 +27,8 @@ class Student(models.Model):
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     date_of_birth = models.DateField()
     religion = models.CharField(max_length=100)
-    admission_number =models.CharField(max_length=15)
-    joining_date =models.DateField()
+    admission_number = models.CharField(max_length=15)
+    joining_date = models.DateField()
     mobile_number = models.CharField(max_length=10)    
     student_image = models.ImageField(upload_to='student_images/', blank=True, null=True)
 

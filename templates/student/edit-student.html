@@ -72,7 +72,7 @@
                                     <div class="form-group">
                                         <label>Date of Birth</label>
                                         <div>
-                                            <input type="text" class="form-control" name="date_of_birth" value="{{student.date_of_birth}}">
+                                            <input type="date" class="form-control" name="date_of_birth" value="{{student.date_of_birth | date:'Y-m-d'}}">
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                     <div class="form-group">
                                         <label>Joining Date</label>
                                         <div>
-                                            <input type="text" class="form-control" name="joining_date" value="{{student.joining_date}}">
+                                            <input type="date" class="form-control" name="joining_date" value="{{student.joining_date | date:'Y-m-d'}}">
                                         </div>
                                     </div>
                                 </div>
