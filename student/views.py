@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 # Create your views here.
@@ -77,12 +77,13 @@ def student_list(request):
     return render(request, 'student/student-list.html', {'students': students})
 
 def edit_student(request, slug):
-    student = Student.objects.get(slug=slug)
+    student = get_object_or_404(Student, slug=slug)     # automatically returns 404 if not found
+    parent = student.parent if hasattr(student, 'parent') else None # get the related parent object else None
 
     if request.method == 'POST':
         print('\n\nForm data submitted:')
         print(request.POST)
         print(request.FILES)
         pass
-
-    return render(request, 'student/edit-student.html', {'student': student})
+    
+    return render(request, 'student/edit-student.html', {'student': student, 'parent': parent})
