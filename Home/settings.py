@@ -130,3 +130,11 @@ STATICFILES_DIRS = [
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# custom user model
+AUTH_USER_MODEL = 'home_auth.CustomUser'        #  (app_label.ModelName) tells Django to use this model instead of the default User model
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',  # default backend   
+# 'home_auth.backends.EmailBackend',  # custom backend to authenticate using email
+# ]
