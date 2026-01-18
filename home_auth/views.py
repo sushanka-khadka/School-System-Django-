@@ -21,7 +21,7 @@ def signup_view(request):
 
         # create user logic goes here
         user = CustomUser.objects.create_user(  # create_user is a method provided by AbstractUser (ensure password is hashed & default fields are handled -> create won't work here)
-            username=email,
+            # username=email,
             email=email,
             first_name=first_name,
             last_name=last_name,
@@ -37,7 +37,7 @@ def login_view(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, username=email, password=password) # get the authenticated user object
+        user = authenticate(request, email=email, password=password) # get the authenticated user object
         if user is not None:
             login(request, user)
             return redirect('student_list')  # redirect to dashboard later based on user role
@@ -46,4 +46,16 @@ def login_view(request):
     return render(request, 'authentication/login.html')
 
 def forgot_password_view(request):
+    if request.method == 'POST':
+        email = request.POST['email']   # assume email is sent via POST
+        user = CustomUser.objects.get(email=email)   # as email is unique
+        if user:
+            pass           
+            
+        return render(request, 'authentication/forgot-password.html', {'error': 'User doesn\'t exist.'})
+        
+
+        # Here, you would typically generate a password reset token and send an email to the user.
+        # For simplicity, we'll just render a success message.
+        return render(request, 'authentication/forgot-password.html', {'message': 'A password reset link has been sent to your email.'})
     return render(request, 'authentication/forgot-password.html')
