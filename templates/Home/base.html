@@ -34,9 +34,9 @@
         <ul class="nav user-menu">
             <li class="nav-item dropdown noti-dropdown">
                 <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                    <i class="far fa-bell"></i> 
-                    {% if unread_notifications %}
-                    <span class="badge badge-pill">{{ unread_notifications.count }}</span>
+                    <i class="far fa-bell"></i>
+                    {% if notifications %}
+                    <span class="badge badge-pill">{{ notifications.count }}</span>
                     {% endif %}
                 </a>
                 <div class="dropdown-menu notifications">
@@ -46,27 +46,30 @@
                     </div>
                     <div class="noti-content">
                         <ul class="notification-list">
-                            {% for item in unread_notifications %}
-                            <li class="notification-message">
-                                <a href="#">
+                            {% for item in notifications %}
+                            <li class="notification-message" id="notification-{{ item.id }}">
+                                <a href="#" onclick="markAsRead('{{ item.id }}'); return false;">
                                     <div class="d-flex align-items-center">
                                         <span class="avatar avatar-sm me-2">
                                             <img class="avatar-img rounded-circle" alt="User Image"
                                                 src="{% static 'assets/img/profiles/avatar-02.jpg' %}">
                                         </span>
                                         <div>
-                                            <p class="noti-details mb-0"><span class="noti-title">{{item.user.first_name}}</span> {{item.message}}<span class="noti-title"> your estimate</span></p>
-                                            <p class="noti-time mb-0"><span class="notification-time">{{ item.created_at | timesince }} ago</span>
+                                            <p class="noti-details mb-0"><span
+                                                    class="noti-title">{{item.user.first_name}}</span>
+                                                {{item.message}}<span class="noti-title"> your estimate</span></p>
+                                            <p class="noti-time mb-0"><span class="notification-time">{{ item.created_at
+                                                    | timesince }} ago</span>
                                             </p>
                                         </div>
                                     </div>
                                 </a>
-                            </li>                            
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
                     <div class="topnav-dropdown-footer">
-                        <a href="#">View all Notifications</a>
+                        <a href="{% url 'show_all_notifications' %}">View all Notifications</a>
                     </div>
                 </div>
             </li>
@@ -266,4 +269,86 @@
     {% block content %}
     {% endblock %}
 </div>
+<script type="text/javascript">
+
+    // Mark individual notification as read
+    function markAsRead(notificationId) {
+        // Use a base URL with a dummy ID and replace it
+        const baseUrl = "{% url 'mark_notification_as_read' 0 %}";
+        const url = baseUrl.replace('0', notificationId);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Hide the notification item
+                    const li = document.getElementById(`notification-${notificationId}`);
+                    if (li) {
+                        li.style.display = 'none';
+                    }
+                    // Optionally update the badge count
+                    const badge = document.querySelector('.badge');
+                    if (badge) {
+                        let count = parseInt(badge.textContent);
+                        if (!isNaN(count) && count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    const clearAllBtn = document.querySelector('.clear-noti');
+    document.addEventListener('DOMContentLoaded', function () {
+        if (clearAllBtn) {
+            // Add a click event listener to the "Clear All" button
+            clearAllBtn.addEventListener('click', function () {
+                const clearUrl = "{% url 'clear_all_notifications' %}";  // Ensure this URL points to the correct view
+
+                // Use Fetch to send a POST request to clear all notifications
+                fetch(clearUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                    .then(response => response.json())  // Parse the JSON response
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Clear all notifications from the dropdown
+                            const notificationList = document.querySelector('.notification-list');
+                            if (notificationList) {
+                                notificationList.innerHTML = '<li>No new notifications</li>';  // Optionally show a "No new notifications" message
+
+                                // Optionally update the badge count
+                                const badge = document.querySelector('.badge');
+                                if (badge) {
+                                    let count = parseInt(badge.textContent);
+                                    if (!isNaN(count) && count > 1) {
+                                        badge.textContent = '';
+                                    } else {
+                                        badge.remove();
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);  // Log any errors
+                    });
+            });
+        }
+    });
+</script>
+
 {% endblock %}
