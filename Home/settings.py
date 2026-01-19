@@ -138,3 +138,9 @@ AUTH_USER_MODEL = 'home_auth.CustomUser'        #  (app_label.ModelName) tells D
 #     'django.contrib.auth.backends.ModelBackend',  # default backend   
 # 'home_auth.backends.EmailBackend',  # custom backend to authenticate using email
 # ]
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'     # for development purpose only
+
+USE_TZ = True   # enable timezone support
+TIME_ZONE = 'Asia/Kathmandu'

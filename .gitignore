@@ -10,3 +10,5 @@ media/
 
 # ignore static images for development
 static/assets/img/
+
+ongoing-issues.txt

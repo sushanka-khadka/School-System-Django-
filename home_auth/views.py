@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-# Create your views here.
-from .models import CustomUser
+from django.utils.crypto import get_random_string
+from .models import CustomUser, PasswordResetRequest
 
 def signup_view(request):
     if request.method == 'POST':
@@ -21,7 +21,7 @@ def signup_view(request):
 
         # create user logic goes here
         user = CustomUser.objects.create_user(  # create_user is a method provided by AbstractUser (ensure password is hashed & default fields are handled -> create won't work here)
-            # username=email,
+            # username=email,w
             email=email,
             first_name=first_name,
             last_name=last_name,
@@ -47,15 +47,40 @@ def login_view(request):
 
 def forgot_password_view(request):
     if request.method == 'POST':
-        email = request.POST['email']   # assume email is sent via POST
-        user = CustomUser.objects.get(email=email)   # as email is unique
+        email = request.POST.get('email')
+        user = CustomUser.objects.filter(email=email).first()
         if user:
-            pass           
-            
-        return render(request, 'authentication/forgot-password.html', {'error': 'User doesn\'t exist.'})
+            token = get_random_string(length=32)
+            reset_request = PasswordResetRequest.objects.create(user=user, email=email, token=token)
+            reset_request.send_reset_email(request)
+            context = {
+                'token': token,
+                'message': 'A password reset link has been sent to your email.'
+            }
+            return render(request, 'authentication/forgot-password.html', context)
         
 
         # Here, you would typically generate a password reset token and send an email to the user.
         # For simplicity, we'll just render a success message.
-        return render(request, 'authentication/forgot-password.html', {'message': 'A password reset link has been sent to your email.'})
+        return render(request, 'authentication/forgot-password.html', {'error': 'User doesn\'t exist.'})
     return render(request, 'authentication/forgot-password.html')
+
+def reset_password_view(request, token):
+    reset_request = PasswordResetRequest.objects.filter(token=token).first()
+    if not (reset_request and reset_request.is_valid):    # doesn't check for 2nd condition if reset_request is None
+        print("Invalid or expired token")
+        return redirect('forgot_password')
+    
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        if new_password != confirm_password:
+            return render(request, 'authentication/reset-password.html', {'error': 'Passwords do not match.', 'token': token})
+        
+        reset_request.user.set_password(new_password)       # hash the new password
+        reset_request.user.save()
+        reset_request.delete()  # Invalidate the used token
+
+        print("Password reset successful")
+        return redirect('login')
+    return render(request, 'authentication/reset-password.html', {'token': token})

@@ -1,6 +1,6 @@
 {% extends 'Home/base.html' %}
 
-{% block body %}
+{% block content %}
 <div class="page-wrapper">
     <div class="content container-fluid">
         <div class="page-header">
@@ -14,7 +14,7 @@
                 </div>
                 <div>
                     <a href="#"><i class="fas fa-download"></i>Download</a>
-                    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                    <a href="{% url 'add_student' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>

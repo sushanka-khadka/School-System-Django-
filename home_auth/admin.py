@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import CustomUser
+from .models import CustomUser, PasswordResetRequest
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
@@ -18,3 +18,14 @@ class CustomUserAdmin(admin.ModelAdmin):
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_authorized',
                                     'groups', 'user_permissions')}),
     )
+
+@admin.register(PasswordResetRequest)
+class PasswordResetRequestAdmin(admin.ModelAdmin):
+    list_display = ('user', 'email', 'token', 'created_at', 'is_valid')
+    search_fields = ('email', 'token')
+    ordering = ('-created_at',)
+
+
+
+admin.site.site_header = "School Management System Admin"
+admin.site.site_title = "School Management System Admin Portal"
