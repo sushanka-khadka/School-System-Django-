@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.utils.crypto import get_random_string
+from django.contrib import messages
 from .models import CustomUser, PasswordResetRequest
 
 def signup_view(request):
@@ -53,22 +54,18 @@ def forgot_password_view(request):
             token = get_random_string(length=32)
             reset_request = PasswordResetRequest.objects.create(user=user, email=email, token=token)
             reset_request.send_reset_email(request)
-            context = {
-                'token': token,
-                'message': 'A password reset link has been sent to your email.'
-            }
-            return render(request, 'authentication/forgot-password.html', context)
+            
+            messages.success(request, 'A password reset link has been sent to your email.')
+            return redirect('forgot_password')
         
-
-        # Here, you would typically generate a password reset token and send an email to the user.
-        # For simplicity, we'll just render a success message.
-        return render(request, 'authentication/forgot-password.html', {'error': 'User doesn\'t exist.'})
+        messages.error(request, 'User with this email does not exist.')
+        return redirect('forgot_password')
     return render(request, 'authentication/forgot-password.html')
 
 def reset_password_view(request, token):
     reset_request = PasswordResetRequest.objects.filter(token=token).first()
     if not (reset_request and reset_request.is_valid):    # doesn't check for 2nd condition if reset_request is None
-        print("Invalid or expired token")
+        messages.error(request, 'The password reset link is invalid or has expired. Please request a new one.')
         return redirect('forgot_password')
     
     if request.method == 'POST':
@@ -81,6 +78,6 @@ def reset_password_view(request, token):
         reset_request.user.save()
         reset_request.delete()  # Invalidate the used token
 
-        print("Password reset successful")
+        messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
         return redirect('login')
     return render(request, 'authentication/reset-password.html', {'token': token})

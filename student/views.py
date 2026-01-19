@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseForbidden
-# Create your views here.
 from .models import Student, Parent
+from school.views import create_notification
 
 def add_student(request):
     if request.method == 'POST':
@@ -129,6 +129,8 @@ def edit_student(request, slug):
         student.save()  # save updated student data
 
         messages.success(request, 'Student updated successfully!')
+        create_notification(request.user, f'Student {student.first_name} {student.last_name} updated.')
+        
         return redirect('student_list')
     
     return render(request, 'student/edit-student.html', {'student': student, 'parent': parent})
