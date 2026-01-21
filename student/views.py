@@ -3,7 +3,9 @@ from django.contrib import messages
 from django.http import HttpResponseForbidden
 from .models import Student, Parent
 from school.views import create_notification
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='login')
 def add_student(request):
     if request.method == 'POST':
         # retrieve student data from the form
@@ -71,14 +73,17 @@ def add_student(request):
     
     return render(request, 'student/add-student.html')
 
+@login_required(login_url='login')
 def student_list(request):
     students = Student.objects.all()
     return render(request, 'student/student-list.html', {'students': students})
 
+@login_required(login_url='login')
 def student_detail(request, slug):
     student = get_object_or_404(Student, slug=slug)
     return render(request, 'student/student-detail.html', {'student': student})
 
+@login_required(login_url='login')
 def edit_student(request, slug):
     student = get_object_or_404(Student, slug=slug)     # automatically returns 404 if not found
     parent = student.parent if hasattr(student, 'parent') else None # get the related parent object else None
@@ -135,6 +140,7 @@ def edit_student(request, slug):
     
     return render(request, 'student/edit-student.html', {'student': student, 'parent': parent})
 
+@login_required(login_url='login')
 def delete_student(request, slug):
     if request.method == 'POST':
         student = get_object_or_404(Student, slug=slug)

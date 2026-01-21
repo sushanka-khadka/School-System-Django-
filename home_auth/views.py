@@ -81,3 +81,8 @@ def reset_password_view(request, token):
         messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
         return redirect('login')
     return render(request, 'authentication/reset-password.html', {'token': token})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
