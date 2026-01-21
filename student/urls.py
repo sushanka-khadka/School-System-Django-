@@ -7,4 +7,7 @@ urlpatterns = [
     path('<slug:slug>/', views.student_detail, name='student_detail'),
     path('edit/<slug:slug>/', views.edit_student, name='edit_student'),
     path('delete/<slug:slug>/', views.delete_student, name='delete_student'),
+
+    # download student data as CSV
+    path('download/csv/', views.download_students_csv, name='download_students_csv'),
 ]

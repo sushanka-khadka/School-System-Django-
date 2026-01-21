@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from .models import Student, Parent
 from school.views import create_notification
 from django.contrib.auth.decorators import login_required
+import csv
 
 @login_required(login_url='login')
 def add_student(request):
@@ -69,7 +70,7 @@ def add_student(request):
         )
 
         messages.success(request, 'Student added successfully!')
-        return redirect('student-list')
+        return redirect('student_list')
     
     return render(request, 'student/add-student.html')
 
@@ -150,3 +151,28 @@ def delete_student(request, slug):
         return redirect('student_list')
 
     return HttpResponseForbidden('Cannot delete student')
+
+@login_required(login_url='login')
+def download_students_csv(request):
+    # create the http response with csv content type
+    response = HttpResponse(content_type='text/csv') # tell the browser it's a csv file
+    response['Content-Disposition'] = 'attachment; filename="students.csv"'  # downloadable file with filename
+
+    writer = csv.writer(response)
+    # write the header row
+    writer.writerow(['Student ID', 'First Name', 'Last Name', 'Class', 'Section', 'Gender', 'Date of Birth', 'Admission Number', 'Mobile Number'])
+
+    # write data rows
+    for student in Student.objects.all():
+        writer.writerow([
+            student.student_id,
+            student.first_name,
+            student.last_name,
+            student.student_class,
+            student.section,
+            student.gender,
+            student.date_of_birth,
+            student.admission_number,
+            student.mobile_number
+        ])
+    return response
