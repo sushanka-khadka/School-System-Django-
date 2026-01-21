@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include('school.urls')),
     path('student/', include('student.urls')),
     path('authentication/', include('home_auth.urls')),
+    path('subject/', include('subject.urls')),
 ]
 
 from django.conf import settings

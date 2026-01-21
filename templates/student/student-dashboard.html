@@ -1,5 +1,7 @@
 {% extends 'Home/base.html' %}
 
+{% block page_title %} Preskool - Dashboard {% endblock %}
+
 {% block content %}
 <div class="page-wrapper">
     <div class="content container-fluid">
@@ -153,7 +155,7 @@
                                         <h5 class="card-title">Learning Activity</h5>
                                     </div>
                                     <div class="col-6">
-                                        <ul class="list-inline-group text-right mb-0 pl-0">
+                                        <ul class="list-inline-group text-end mb-0 pl-0">
                                             <li class="list-inline-item">
                                                 <div class="form-group mb-0 amount-spent-select">
                                                     <select class="form-control form-control-sm">
@@ -258,5 +260,4 @@
     {% include 'Home/footer.html' %}    
 
 </div>
-
 {% endblock %}
