@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'student',
     'home_auth',
     'subject',
+    'teacher',
 ]
 
 MIDDLEWARE = [
