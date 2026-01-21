@@ -6,7 +6,7 @@
 
 {% endblock %}
 
-
+{% load sidebar_tags %}
 
 {% block body %}
 <div class="main-wrapper">
@@ -116,8 +116,8 @@
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Students</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'student_list' %}">Student List</a></li>
-                            <li><a href="{% url 'add_student' %}">Student Add</a></li>
+                            <li><a href="{% url 'student_list' %}" class="{% is_active_menu 'student_list' %}">Student List</a></li>
+                            <li><a href="{% url 'add_student' %}" class="{% is_active_menu 'add_student' %}">Student Add</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -139,12 +139,12 @@
                             <li><a href="edit-department.html">Department Edit</a></li>
                         </ul>
                     </li>
-                    <li class="submenu">
+                    <li class="submenu {% is_active_menu 'subject' %}">
                         <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'subject_list' %}">Subject List</a></li>
-                            <li><a href="{% url 'add_subject' %}">Subject Add</a></li>
+                            <li><a href="{% url 'subject_list' %}" class="{% is_active_menu 'subject_list' %}">Subject List</a></li>
+                            <li><a href="{% url 'add_subject' %}" class="{% is_active_menu 'add_subject' %}">Subject Add</a></li>
                         </ul>
                     </li>
                     <li class="menu-title">
