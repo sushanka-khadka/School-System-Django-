@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'school.context_processors.dashboards',   # custom context processor to provide dashboards based on user role
             ],
         },
     },
