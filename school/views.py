@@ -1,10 +1,51 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Notification
 
+from school import context_processors
+
+@login_required(login_url='login')
 def index(request):
-    return render(request, 'authentication/login.html')
+    dashboards = context_processors.dashboards(request)['dashboards']
+
+    if len(dashboards) >= 1:
+     # multiples roles: render default at '/' and selected dashboard would be at dashboard/<role> URL
+        dash = dashboards[0]['url_name']  # Default to first role
+        if dash == 'admin_dashboard':
+            return render(request, 'home/index.html', {'dashboards': dashboards})
+        elif dash == 'teacher_dashboard':
+            return render(request, 'teacher/teacher-dashboard.html', {'dashboards': dashboards})
+        elif dash == 'student_dashboard':
+            return render(request, 'student/student-dashboard.html', {'dashboards': dashboards})
+    else:
+        return redirect('login')  # No valid role found, redirect to login
+
+
+def is_admin(user):
+    return hasattr(user, 'is_admin') and user.is_admin
+def is_teacher(user):
+    return hasattr(user, 'is_teacher') and user.is_teacher
+def is_student(user):
+    return hasattr(user, 'is_student') and user.is_student
+
+
+# protected views for each dashboard
+@login_required(login_url='login')
+@user_passes_test(is_admin, login_url='login')
+def admin_dashboard(request):
+    return render(request, 'home/index.html')
+
+@login_required(login_url='login')
+@user_passes_test(is_teacher, login_url='login')
+def teacher_dashboard(request):
+    return render(request, 'teacher/teacher-dashboard.html')
+
+@login_required(login_url='login')
+@user_passes_test(is_student, login_url='login')
+def student_dashboard(request):
+    return render(request, 'student/student-dashboard.html')
+
 
 
 def create_notification(user, message):
@@ -19,6 +60,8 @@ def dashboard(request):
     }
     return render(request, 'student/student-dashboard.html', context)
 
+
+#region notifications
 @login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
     notification = Notification.objects.get(id=notification_id, user=request.user)
@@ -46,3 +89,4 @@ def show_all_notifications(request):
         'notifications': notifications,
     }
     return render(request, 'student/student-dashboard.html', context)
+#endregion

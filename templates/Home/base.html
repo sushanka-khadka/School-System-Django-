@@ -58,8 +58,8 @@
                                             <p class="noti-details mb-0"><span
                                                     class="noti-title">{{item.user.first_name}}</span>
                                                 {{item.message}}<span class="noti-title"> your estimate</span></p>
-                                            <p class="noti-time mb-0"><span class="notification-time">{{ item.created_at
-                                                    | timesince }} ago</span>
+                                            <p class="noti-time mb-0"><span
+                                                    class="notification-time">{{item.created_at|timesince}} ago</span>
                                             </p>
                                         </div>
                                     </div>
@@ -107,41 +107,75 @@
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Dashboard</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
+                            {% if request.user.is_admin %}
                             <li><a href="index.html">Admin Dashboard</a></li>
+                            {% endif %}
+                            {% if request.user.is_teacher %}
                             <li><a href="teacher-dashboard.html">Teacher Dashboard</a></li>
+                            {% endif %}
+                            {% if request.user.is_student %}
                             <li><a href="student-dashboard.html">Student Dashboard</a></li>
+                            {% endif %}
                         </ul>
                     </li>
+                    <li class="menu-title">
+                        <span>Test Dash</span>
+                    </li>
+                    <li class="submenu">
+                        {% if dashboards|length > 1 %}
+                        <a href="#"><i class="fas fa-user-graduate"></i> <span>Dashboards</span><span
+                                class="menu-arrow"></span></a>
+                        <ul>
+                            {% for dash in dashboards %}
+                            <li><a href="{% url dash.url_name %}">{{dash.display_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                    <li>
+                        <a href="{% url 'index' %}"><i class="fas fa-user-graduate"></i>
+                            <span>{{dashboards.0.display_name}}</span></a>
+                    </li>
+                    {% endif %}
+                    </li>
+
                     <li class="submenu">
                         <a href="#"><i class="fas fa-user-graduate"></i> <span> Students</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'student_list' %}" class="{% is_active_menu 'student_list' %}">Student List</a></li>
-                            <li><a href="{% url 'add_student' %}" class="{% is_active_menu 'add_student' %}">Student Add</a></li>
+                            <li><a href="{% url 'student_list' %}" class="{% is_active_menu 'student_list' %}">Student
+                                    List</a></li>
+                            <li><a href="{% url 'add_student' %}" class="{% is_active_menu 'add_student' %}">Student
+                                    Add</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
                         <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'teacher_list' %}">Teacher List</a></li>                            
-                            <li><a href="{% url 'add_teacher' %}">Teacher Add</a></li>                            
+                            <li><a href="{% url 'teacher_list' %}" class="{% is_active_menu 'teacher_list' %}">Teacher
+                                    List</a></li>
+                            <li><a href="{% url 'add_teacher' %}" class="{% is_active_menu 'add_teacher' %}">Teacher
+                                    Add</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
                         <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'department_list' %}">Department List</a></li>
-                            <li><a href="{% url 'add_department' %}">Department Add</a></li>
+                            <li><a href="{% url 'department_list' %}"
+                                    class="{% is_active_menu 'department_list' %}">Department List</a></li>
+                            <li><a href="{% url 'add_department' %}"
+                                    class="{% is_active_menu 'add_department' %}">Department Add</a></li>
                         </ul>
                     </li>
                     <li class="submenu {% is_active_menu 'subject' %}">
                         <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="{% url 'subject_list' %}" class="{% is_active_menu 'subject_list' %}">Subject List</a></li>
-                            <li><a href="{% url 'add_subject' %}" class="{% is_active_menu 'add_subject' %}">Subject Add</a></li>
+                            <li><a href="{% url 'subject_list' %}" class="{% is_active_menu 'subject_list' %}">Subject
+                                    List</a></li>
+                            <li><a href="{% url 'add_subject' %}" class="{% is_active_menu 'add_subject' %}">Subject
+                                    Add</a></li>
                         </ul>
                     </li>
                     <li class="menu-title">
