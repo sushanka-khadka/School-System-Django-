@@ -46,7 +46,7 @@
                                         <td>{{subject.class_level}}</td>
                                         <td class="text-end">
                                             <div class="actions">
-                                                <a href="{% url 'edit_subject' subject.code %}" class="btn btn-sm bg-success-light mr-2">
+                                                <a href="{% url 'edit_subject' subject.code %}" class="btn btn-sm bg-success-light me-2">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
                                                 <form method="post" action="{% url 'delete_subject' subject.code %}" style="display: inline;">
