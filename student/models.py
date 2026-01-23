@@ -35,6 +35,10 @@ class Student(models.Model):
     parent = models.OneToOneField(Parent, on_delete=models.CASCADE)     # one-to-one relationship with Parent model
     slug = models.CharField(max_length=100, unique=True, blank=True)    # auto-generated field
 
+    present_class = models.ForeignKey(to='school.Class', on_delete=models.SET_NULL, null=True, blank=True)
+    subjects = models.ManyToManyField(to='subject.Subject', blank=True)
+    
+
     def __str__(self):
         return f'{self.first_name} {self.last_name} ({self.student_id})'
     

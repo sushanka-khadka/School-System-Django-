@@ -3552,5 +3552,5 @@ table.table-inbox tbody tr.checked {
 /* DataTables v2 pagination gap fix */
 div.dt-container .dt-paging .dt-paging-button {
     margin: 0 !important;
-    padding: 0.25rem 0.25rem !important;
+    padding: 0.25rem 0 !important;
 }

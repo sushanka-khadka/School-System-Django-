@@ -3,7 +3,8 @@ from django.db import models
 # Create your models here.
 
 class Department(models.Model):
-    department_id = models.CharField(max_length=10, primary_key=True)
+    # id : surrogate primary key (default by Django) used for internal relations
+    department_id = models.CharField(max_length=10, unique=True)    # business key
     name = models.CharField(max_length=100)
     hod = models.CharField(max_length=100)  # Head of Department
     start_date = models.DateField()

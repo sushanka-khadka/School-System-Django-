@@ -23,7 +23,7 @@
                         <div class="about-info">
                             <h4>About Me</h4>
                             <div class="d-flex mt-3">
-                                <img src="assets/img/user.jpg" class="me-3" alt="...">
+                                <img src="{%if teacher.teacher_image %} {{teacher.teacher_image.url}} {% endif %}" class="me-3" alt="...">
                                 <div>
                                     <ul>
                                         <li>
@@ -32,7 +32,7 @@
                                         </li>
                                         <li>
                                             <span class="title-span">Department : </span>
-                                            <span class="info-span">Computer Science</span>
+                                            <span class="info-span">{{teacher.department.name|default:'Not Assigned'}}</span>
                                         </li>
                                         <li>
                                             <span class="title-span">Mobile : </span>

@@ -51,7 +51,9 @@ def teacher_list(request):
 
 @login_required(login_url='login')
 def teacher_detail(request, teacher_id):
-    teacher = get_object_or_404(Teacher, teacher_id=teacher_id)
+    teacher = get_object_or_404(Teacher.objects.select_related('department'),   # Optimized quyer: (just 1 additional query for department else N+1 queries if accessed in template) 
+                                teacher_id=teacher_id)
+    
     return render(request, 'teacher/teacher-detail.html', {'teacher': teacher})
 
 @login_required(login_url='login')

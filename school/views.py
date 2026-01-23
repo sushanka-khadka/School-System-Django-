@@ -29,12 +29,18 @@ def is_teacher(user):
 def is_student(user):
     return hasattr(user, 'is_student') and user.is_student
 
+from student.models import Student
+from department.models import Department
 
 # protected views for each dashboard
 @login_required(login_url='login')
 @user_passes_test(is_admin, login_url='login')
 def admin_dashboard(request):
-    return render(request, 'home/index.html')
+    context = {
+        'students': Student.objects.all(),
+        'departments': Department.objects.all(),
+    }
+    return render(request, 'home/index.html', context)
 
 @login_required(login_url='login')
 @user_passes_test(is_teacher, login_url='login')

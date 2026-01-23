@@ -12,6 +12,7 @@ class Teacher(models.Model):
     mobile_number = models.CharField(max_length=10)
     qualification = models.CharField(max_length=100)
     experience = models.CharField(max_length=100)
+    teacher_image = models.ImageField(upload_to='teacher_images/', null=True, blank=True)
 
     # login credentials
     email = models.EmailField(max_length=100, unique=True)   
@@ -22,3 +23,7 @@ class Teacher(models.Model):
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10)
+
+    department = models.ForeignKey(to='department.Department', on_delete=models.SET_NULL, null=True, blank=True)
+    subjects = models.ManyToManyField(to='subject.Subject', blank=True)
+
