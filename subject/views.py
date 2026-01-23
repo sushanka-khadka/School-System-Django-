@@ -57,3 +57,111 @@ def delete_subject(request, code):
         return redirect('subject_list')
     return HttpResponseForbidden('Cannot delete subject')
 
+
+from school.models import ClassTeacherAssignment
+
+# Assignment Views
+@login_required(login_url='login')
+def assignment_list(request):
+    assignments = ClassTeacherAssignment.objects.select_related('class_assigned', 'subject', 'teacher').all()
+
+    print(assignments)
+    return render(request, 'subject/assignment-list.html', {'assignments': assignments})    
+
+from school.models import Class
+from teacher.models import Teacher
+from django.db import transaction, IntegrityError
+
+@login_required(login_url='login')
+def add_assignment(request):
+    if request.method == 'POST':
+        class_id = request.POST.get('class_assigned')
+        subject_id = request.POST.get('subject')
+        teacher_id = request.POST.get('teacher')
+
+        # basic validation
+        if not(class_id and subject_id and teacher_id):
+            messages.error(request, 'All fields are required!')
+            return redirect('add_assignment')
+        
+        # existence check
+        teacher = get_object_or_404(Teacher, id=teacher_id)
+        subject = get_object_or_404(Subject, id=subject_id)
+        class_assigned = get_object_or_404(Class, id=class_id)
+
+        try:
+            with transaction.atomic():   # atomic transaction to ensure data integrity
+                assignment, created=  ClassTeacherAssignment.objects.get_or_create(
+                    class_assigned=class_assigned,
+                    subject=subject,
+                    teacher=teacher
+                )
+
+        except IntegrityError:
+            messages.error(request, 'This assignment already exists(race)!')
+            # return redirect('add_assignment')
+        
+        if not created:
+            messages.error(request, 'This assignment already exists!')
+            # return redirect('add_assignment')
+        else:
+            messages.success(request, 'Assignment added successfully!')
+            # return redirect('assignment_list')
+
+    classes = Class.objects.all()
+    subjects = Subject.objects.all()
+    teachers = Teacher.objects.all()
+    context = {
+        'available_classes': classes,
+        'available_subjects': subjects,
+        'available_teachers': teachers,
+    }
+    return render(request, 'subject/add-assignment.html', context)
+
+@login_required(login_url='login')
+def edit_assignment(request, assignment_id):
+    obj = get_object_or_404(ClassTeacherAssignment, id=assignment_id)
+
+    if request.method == 'POST':
+        class_assigned = request.POST.get('class_assigned')
+        subject = request.POST.get('subject')
+        teacher = request.POST.get('teacher')
+
+        try:
+            with transaction.atomic():   # atomic transaction to ensure data integrity
+                obj.class_assigned_id = class_assigned
+                obj.subject_id = subject
+                obj.teacher_id = teacher
+                obj.save()
+        except IntegrityError:
+            messages.error(request, 'This assignment already exists(race)!')
+            return redirect('edit_assignment', assignment_id=assignment_id)
+        
+        messages.success(request, 'Assignment Updated successfully!')
+        return redirect('assignment_list')
+
+
+
+    classes = Class.objects.all()
+    subjects = Subject.objects.all()
+    teachers = Teacher.objects.all()
+    context = {
+        'available_classes': classes,
+        'available_subjects': subjects,
+        'available_teachers': teachers,
+        'selected_class': obj.class_assigned,
+        'selected_subject': obj.subject,
+        'selected_teacher': obj.teacher,
+        'assignment': obj,
+    }
+    return render(request, 'subject/edit-assignment.html', context)
+
+
+@login_required(login_url='login')
+def delete_assignment(request, assignment_id):
+    if request.method == 'POST':
+        assignment = get_object_or_404(ClassTeacherAssignment, id=assignment_id)
+        assignment.delete()
+        messages.success(request, 'Assignment deleted successfully!')
+        return redirect('assignment_list')
+    return HttpResponseForbidden('Cannot delete assignment')
