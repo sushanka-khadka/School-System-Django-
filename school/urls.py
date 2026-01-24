@@ -10,6 +10,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     
     path('user-management/', views.user_management, name='user_management'),
+    path('edit-user/<int:user_id>/', views.edit_user, name='edit_user'),
     
     path('mark-notification-as-read/<str:notification_id>/', views.mark_notification_as_read, name='mark_notification_as_read'),
     path('clear-all-notifications/', views.clear_notifications, name='clear_all_notifications'),

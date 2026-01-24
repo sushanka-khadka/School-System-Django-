@@ -1,9 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Notification
-
+from django.contrib import messages
+from home_auth.models import CustomUser
+from .forms import UserCreationForm, UserEditForm
 from school import context_processors
+from .models import Notification
+from student.models import Student
+from department.models import Department
+
 
 @login_required(login_url='login')
 def index(request):
@@ -29,9 +34,8 @@ def is_teacher(user):
 def is_student(user):
     return hasattr(user, 'is_student') and user.is_student
 
-from student.models import Student
-from department.models import Department
 
+#region dashboard views
 # protected views for each dashboard
 @login_required(login_url='login')
 @user_passes_test(is_admin, login_url='login')
@@ -51,7 +55,7 @@ def teacher_dashboard(request):
 @user_passes_test(is_student, login_url='login')
 def student_dashboard(request):
     return render(request, 'student/student-dashboard.html')
-
+#endregion
 
 
 def create_notification(user, message):
@@ -97,15 +101,39 @@ def show_all_notifications(request):
     return render(request, 'student/student-dashboard.html', context)
 #endregion
 
-from home_auth.models import CustomUser
-from school.forms import UserRoleForm
 
 @login_required(login_url='login')
 @user_passes_test(is_admin, login_url='login')
 def user_management(request):
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])    # hash the password before saving
+            user.save()
+            messages.success(request, 'User created successfully.')
+            return redirect('user_management')
+        else:
+            messages.error(request, 'Error creating user.')
+    
     users = CustomUser.objects.all()
     context = {
         'users': users,
+        'form': form,
     }
-
     return render(request, 'home/user_management.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(is_admin, login_url='login')
+def edit_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User updated successfully.')
+            return redirect('user_management')
+    else:
+        form = UserEditForm(instance=user)
+    return render(request, 'home/edit_user.html', {'form': form, 'user': user})
