@@ -65,96 +65,89 @@ from school.models import ClassTeacherAssignment
 def assignment_list(request):
     assignments = ClassTeacherAssignment.objects.select_related('class_assigned', 'subject', 'teacher').all()
 
-    print(assignments)
     return render(request, 'subject/assignment-list.html', {'assignments': assignments})    
 
 from school.models import Class
 from teacher.models import Teacher
 from django.db import transaction, IntegrityError
+from .forms import AssignmentForm
 
 @login_required(login_url='login')
 def add_assignment(request):
+    form = AssignmentForm()
+    # form.fields['class_assigned'].queryset = Class.objects.all()
     if request.method == 'POST':
-        class_id = request.POST.get('class_assigned')
-        subject_id = request.POST.get('subject')
-        teacher_id = request.POST.get('teacher')
-
-        # basic validation
-        if not(class_id and subject_id and teacher_id):
-            messages.error(request, 'All fields are required!')
-            return redirect('add_assignment')
-        
-        # existence check
-        teacher = get_object_or_404(Teacher, id=teacher_id)
-        subject = get_object_or_404(Subject, id=subject_id)
-        class_assigned = get_object_or_404(Class, id=class_id)
-
-        try:
-            with transaction.atomic():   # atomic transaction to ensure data integrity
-                assignment, created=  ClassTeacherAssignment.objects.get_or_create(
-                    class_assigned=class_assigned,
-                    subject=subject,
-                    teacher=teacher
-                )
-
-        except IntegrityError:
-            messages.error(request, 'This assignment already exists(race)!')
-            # return redirect('add_assignment')
-        
-        if not created:
-            messages.error(request, 'This assignment already exists!')
-            # return redirect('add_assignment')
+        form = AssignmentForm(request.POST)    
+        if form.is_valid():
+            try:
+                with transaction.atomic():   # atomic transaction to ensure data integrity
+                    assignment = form.save()
+                    messages.success(request, 'Assignment added successfully!')
+                    return redirect('assignment_list')
+            except IntegrityError:
+                messages.error(request, 'This assignment already exists(race)!')
         else:
-            messages.success(request, 'Assignment added successfully!')
-            # return redirect('assignment_list')
-
-    classes = Class.objects.all()
-    subjects = Subject.objects.all()
-    teachers = Teacher.objects.all()
-    context = {
-        'available_classes': classes,
-        'available_subjects': subjects,
-        'available_teachers': teachers,
-    }
-    return render(request, 'subject/add-assignment.html', context)
+            messages.error(request, 'Please correct the errors below.')
+    return render(request, 'subject/add-assignment.html', {'form': form})
 
 @login_required(login_url='login')
 def edit_assignment(request, assignment_id):
     obj = get_object_or_404(ClassTeacherAssignment, id=assignment_id)
+    form = AssignmentForm(instance=obj)
 
     if request.method == 'POST':
-        class_assigned = request.POST.get('class_assigned')
-        subject = request.POST.get('subject')
-        teacher = request.POST.get('teacher')
+        form = AssignmentForm(request.POST, instance=obj)    
+        if form.is_valid():
+            try:
+                with transaction.atomic():   # atomic transaction to ensure data integrity
+                    assignment = form.save()
+                    messages.success(request, 'Assignment updated successfully!')
+                    return redirect('assignment_list')
+            except IntegrityError:
+                messages.error(request, 'This assignment already exists(race)!')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    return render(request, 'subject/edit-assignment.html', {'form': form, 'assignment': obj})
 
-        try:
-            with transaction.atomic():   # atomic transaction to ensure data integrity
-                obj.class_assigned_id = class_assigned
-                obj.subject_id = subject
-                obj.teacher_id = teacher
-                obj.save()
-        except IntegrityError:
-            messages.error(request, 'This assignment already exists(race)!')
-            return redirect('edit_assignment', assignment_id=assignment_id)
+
+
+# @login_required(login_url='login')
+# def edit_assignment(request, assignment_id):
+#     obj = get_object_or_404(ClassTeacherAssignment, id=assignment_id)
+
+#     if request.method == 'POST':
+#         class_assigned = request.POST.get('class_assigned')
+#         subject = request.POST.get('subject')
+#         teacher = request.POST.get('teacher')
+
+#         try:
+#             with transaction.atomic():   # atomic transaction to ensure data integrity
+#                 obj.class_assigned_id = class_assigned
+#                 obj.subject_id = subject
+#                 obj.teacher_id = teacher
+#                 obj.save()
+#         except IntegrityError:
+#             messages.error(request, 'This assignment already exists(race)!')
+#             return redirect('edit_assignment', assignment_id=assignment_id)
         
-        messages.success(request, 'Assignment Updated successfully!')
-        return redirect('assignment_list')
+#         messages.success(request, 'Assignment Updated successfully!')
+#         return redirect('assignment_list')
 
 
 
-    classes = Class.objects.all()
-    subjects = Subject.objects.all()
-    teachers = Teacher.objects.all()
-    context = {
-        'available_classes': classes,
-        'available_subjects': subjects,
-        'available_teachers': teachers,
-        'selected_class': obj.class_assigned,
-        'selected_subject': obj.subject,
-        'selected_teacher': obj.teacher,
-        'assignment': obj,
-    }
-    return render(request, 'subject/edit-assignment.html', context)
+#     classes = Class.objects.all()
+#     subjects = Subject.objects.all()
+#     teachers = Teacher.objects.all()
+#     context = {
+#         'available_classes': classes,
+#         'available_subjects': subjects,
+#         'available_teachers': teachers,
+#         'selected_class': obj.class_assigned,
+#         'selected_subject': obj.subject,
+#         'selected_teacher': obj.teacher,
+#         'assignment': obj,
+#     }
+#     return render(request, 'subject/edit-assignment.html', context)
 
 
 @login_required(login_url='login')

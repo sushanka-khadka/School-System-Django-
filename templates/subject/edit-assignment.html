@@ -21,49 +21,19 @@
             <div class="card-body">
                 <form method="post" action="{% url 'edit_assignment' assignment.id %}">
                     {% csrf_token %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
                     <div class="row">
+                        {% for field in form %}
                         <div class="col-md-3">
-                            <label for="class_assigned" class="form-label">Class</label>
-                            <select name="class_assigned" id="class_assigned" class="form-select" required>
-                                <option value="">Select Class</option>
-                                {% for class_obj in available_classes %}
-                                {% if class_obj == selected_class %}
-                                <option value="{{ class_obj.id }}" selected>{{ class_obj }}</option>
-                                {% else %}
-                                <option value="{{ class_obj.id }}">{{ class_obj }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
+                            {{ field.label_tag }}
+                            {{ field.error }}
+                            {{ field }}
                         </div>
-                        <div class="col-md-3">
-                            <label for="subject" class="form-label">Subject</label>
-                            <select name="subject" id="subject" class="form-select" required>
-                                <option value="">Select Subject</option>
-                                {% for subject_obj in available_subjects %}
-                                {% if subject_obj == selected_subject %}
-                                <option value="{{ subject_obj.id }}" selected>{{ subject_obj }}</option>
-                                {% else %}
-                                <option value="{{ subject_obj.id }}">{{ subject_obj }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="teacher" class="form-label">Teacher</label>
-                            <select name="teacher" id="teacher" class="form-select" required>
-                                <option value="">Select Teacher</option>
-                                {% for teacher in available_teachers %}
-                                <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                                {% endfor %}
-                                {% for teacher_obj in available_teachers %}
-                                {% if teacher_obj == selected_teacher %}
-                                <option value="{{ teacher_obj.id }}" selected>{{ teacher_obj }}</option>
-                                {% else %}
-                                <option value="{{ teacher_obj.id }}">{{ teacher_obj }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
+                        {% endfor %}
 
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary">
