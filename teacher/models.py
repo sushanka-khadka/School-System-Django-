@@ -27,3 +27,6 @@ class Teacher(models.Model):
     department = models.ForeignKey(to='department.Department', on_delete=models.SET_NULL, null=True, blank=True)
     subjects = models.ManyToManyField(to='subject.Subject', blank=True)
 
+    def __str__(self):
+        return f"{self.teacher_id} - {self.name}"
+

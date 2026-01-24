@@ -18,8 +18,5 @@ def is_active_menu(context, url_name):
 
     # for dynamic path matching
     current_url = context.request.resolver_match.url_name  # get the current URL name from the request context
-    print("\nCurrent URL Name:", current_url)
-    print("URL Name to Match:", url_name)
-
     
     return 'active' if current_url == url_name else ''

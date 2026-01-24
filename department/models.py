@@ -9,3 +9,6 @@ class Department(models.Model):
     hod = models.CharField(max_length=100)  # Head of Department
     start_date = models.DateField()
     no_of_students = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.department_id} - {self.name}"

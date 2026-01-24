@@ -7,3 +7,6 @@ class Subject(models.Model):
     name = models.CharField(max_length=100)
     class_level = models.ManyToManyField(to='school.Class', blank=True)
 
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
