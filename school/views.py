@@ -96,3 +96,16 @@ def show_all_notifications(request):
     }
     return render(request, 'student/student-dashboard.html', context)
 #endregion
+
+from home_auth.models import CustomUser
+from school.forms import UserRoleForm
+
+@login_required(login_url='login')
+@user_passes_test(is_admin, login_url='login')
+def user_management(request):
+    users = CustomUser.objects.all()
+    context = {
+        'users': users,
+    }
+
+    return render(request, 'home/user_management.html', context)

@@ -102,7 +102,7 @@
                 <ul>
                     <li class="menu-title">
                         <span>Main Menu</span>
-                    </li>                    
+                    </li>
                     <li class="submenu">
                         {% if dashboards|length > 1 %}
                         <a href="#"><i class="fas fa-user-graduate"></i> <span>Dashboards</span><span
@@ -113,11 +113,12 @@
                             {% endfor %}
                         </ul>
                         {% else %}
-                    <li>
-                        <a href="{% url 'index' %}"><i class="fas fa-user-graduate"></i>
-                            <span>{{dashboards.0.display_name}}</span></a>
-                    </li>
-                    {% endif %}
+                        <li>
+                            <a href="{% url 'index' %}"><i class="fas fa-user-graduate"></i>
+                                <span>{{dashboards.0.display_name}}</span>
+                            </a>
+                        </li>
+                        {% endif %}
                     </li>
 
                     <li class="submenu">
@@ -173,6 +174,11 @@
                     <li class="menu-title">
                         <span>Management</span>
                     </li>
+                    {% if user.is_admin %}
+                    <li>
+                        <a href="{% url 'user_management' %}"><i class="fas fa-users"></i> <span>User Management</span></a>
+                    </li>
+                    {% endif %}
                     <li class="submenu">
                         <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
                                 class="menu-arrow"></span></a>
