@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from .models import Teacher
+from school.models import ClassTeacherAssignment
 from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='login')
@@ -54,7 +56,9 @@ def teacher_detail(request, teacher_id):
     teacher = get_object_or_404(Teacher.objects.select_related('department'),   # Optimized quyer: (just 1 additional query for department else N+1 queries if accessed in template) 
                                 teacher_id=teacher_id)
     
-    return render(request, 'teacher/teacher-detail.html', {'teacher': teacher})
+    assignments = ClassTeacherAssignment.objects.select_related('class_assigned', 'subject').filter(teacher=teacher)
+
+    return render(request, 'teacher/teacher-detail.html', {'teacher': teacher, 'assignments': assignments})
 
 @login_required(login_url='login')
 def edit_teacher(request, teacher_id):

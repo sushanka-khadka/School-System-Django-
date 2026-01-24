@@ -148,3 +148,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'     # for devel
 
 USE_TZ = True   # enable timezone support
 TIME_ZONE = 'Asia/Kathmandu'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'    # default type for primary keys in models

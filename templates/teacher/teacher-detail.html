@@ -31,8 +31,7 @@
                                 </li>
                                 <li>
                                     <span class="title-span">Department : </span>
-                                    <span class="info-span">{{teacher.department.name|default:'Not
-                                        Assigned'}}</span>
+                                    <span class="info-span">{{teacher.department.name|default:'Not Assigned'}}</span>
                                 </li>
                                 <li>
                                     <span class="title-span">Mobile : </span>
@@ -93,6 +92,49 @@
                         <div class="col-md-12">
                             <h5>Present Address</h5>
                             <p>480, Estern Avenue, Courtage area, New York</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2"  style="padding-top: 20px; border-top: 1px solid #ddd;">
+            <div class="col-md-12">
+                <div>
+                    <h4>Assignments</h4>                    
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Assigned Subjects</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Class</th>
+                                                <th>Subject</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if assignments %}
+                                            {% for assignment in assignments %}
+                                            <tr>
+                                                <td>{{assignment.class_assigned}}</td>
+                                                <td>{{assignment.subject}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="2">No assignments found.</td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
